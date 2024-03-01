@@ -1,7 +1,9 @@
 Shader "Unlit/SGradient"{
     Properties{
-        GColor("Color" , Color) = (1.0 , 1.0 , 1.0 , 1.0)
-        GTexture("Texture" , 2D) = "white"{}
+        GFirstColor("First color" , Color) = (0.0 , 0.0 , 0.0 , 0.0)
+        GSecondColor("Second color" , Color) = (0.0 , 0.0 , 0.0 , 0.0)
+        GFirstTexture("First texture" , 2D) = "black"
+        GSecondTexture("Second texture" , 2D) = "black"
     }
     SubShader{
         Tags{
@@ -17,9 +19,12 @@ Shader "Unlit/SGradient"{
             #pragma vertex FVertex
             #pragma fragment FFragment
 
-            half4 GColor;
-            sampler2D GTexture;
-            float4 GTexture_ST;
+            half4 GFirstColor;
+            half4 GSecondColor;
+            sampler2D GFirstTexture;
+            sampler2D GSecondTexture;
+            float4 GFirstTexture_ST;
+            float4 GSecondTexture_ST;
 
             struct SApplicationToVertex{
                 float4 VObject : POSITION;
@@ -33,11 +38,11 @@ Shader "Unlit/SGradient"{
             SVertexToFragment FVertex(SApplicationToVertex PApplicationToVertex){
                 SVertexToFragment LVertexToFragment;
                 LVertexToFragment.VClip = UnityObjectToClipPos(PApplicationToVertex.VObject);
-                LVertexToFragment.VTexture.xy = PApplicationToVertex.VTexture.xy * GTexture_ST.xy + GTexture_ST.zw;
+                LVertexToFragment.VTexture.xy = PApplicationToVertex.VTexture.xy * GFirstTexture_ST.xy + GFirstTexture_ST.zw;
                 return LVertexToFragment;
             }
             half4 FFragment(SVertexToFragment PVertexToFragment) : COLOR{
-                float4 LColor = tex2D(GTexture , PVertexToFragment.VTexture) * GColor;
+                float4 LColor = tex2D(GFirstTexture , PVertexToFragment.VTexture) * tex2D(GSecondTexture , PVertexToFragment.VTexture) * GFirstColor * GSecondColor;
                 LColor.a = PVertexToFragment.VTexture.x;
                 return LColor;
             }

@@ -49,7 +49,7 @@ Shader "Unlit/SLine"{
                 float4 LColor = tex2D(GTexture , PVertexToFragment.VTexture) * GColor;
                 for(int LLine = 0 ; LLine <= GAmount - 1 ; LLine++){
                     LColor.a = FLine(PVertexToFragment.VTexture , GStart + LLine * 2 * GWidth , GStart + (LLine + 1) * 2 * GWidth);
-                    if(LColor){
+                    if(LColor.a){
                         return LColor;
                     }
                 }
